@@ -1,4 +1,4 @@
-# Numpy
+Numpy
 
 - https://aruie.github.io/2019/06/19/numpy.html
 
@@ -60,7 +60,7 @@
   
   ```
 
-  #### Array boolean 인덱싱(마스크) : 원하는 행, 열 값만 뽑아내기
+#### Array boolean 인덱싱(마스크) : 원하는 행, 열 값만 뽑아내기
 
 - ```python
   names = np.array(['Beomwoo','Beomwoo','Kim','Joan','Lee','Beomwoo','Park','Beomwoo'])
@@ -88,17 +88,15 @@
   data[data[:,0]<0,2:4]
   # array([[-1.42474621, -0.05992846], [ 0.16368804, 0.91204438], [-2.29844338, -0.3662913 ]])
   
-  출처: https://doorbw.tistory.com/171 [Tigercow.Door]
-  
   ```
 
-- 
+
 
 ### 연산 함수
 
 - 해당 원소끼리 전부 연산 가능, 행이나 열에 따라서 연산하고 싶으면 axis 변수 사용
 - 사칙연산 (함수 안써도 +,-,*,/ 제곱 가능함 그리고 스칼라 값으로도 가능함)
-  - np.add(), np.substract(), np.multiply(), np.divide()
+  - np.add(), np.subtract(), np.multiply(), np.divide()
 - 내적
   - np.dot()
 - 반환
@@ -167,7 +165,14 @@
   np.savetxt("save.txt", numbers, fmt='%d', delimiter=',')
   ```
 
-#### loadtxt
+#### 입력
+
+- https://jfun.tistory.com/58
+  파일 오픈해서 리스트로 변환 후, ndarray 로 변환하는 방법도 있음
+
+##### loadtxt
+
+- https://numpy.org/doc/stable/reference/generated/numpy.loadtxt.html
 
 - numpy.loadtxt(fname, dtype=<class 'float', comments='#', delimiter=' ',  		conerters=None, skiprows=0, usecols=None, unpack=False, ndmin=0,             encoding='bytes', max_rows=None>)
 
@@ -177,6 +182,29 @@
   ```python
   a = np.loadtxt("save.txt", delimiter=",")
   ```
+
+- 헤더 제외 언패킹 처리
+
+  ```python
+  import numpy as np
+  x, y, z = np.loadtxt('text.txt',
+                      skiprows=1,
+                      unpack=True)
+  
+  print(x)
+  print(y)
+  print(z)
+  
+  '''
+  [ 0.2536 0.4839 0.1292 0.1781 0.6253] [ 0.1008 0.4536 0.6875 0.3049 0.3486] [ 0.3857 0.3561 0.5929 0.8928 0.8791]
+  '''
+  ```
+
+##### genfromtxt
+
+- https://m.blog.naver.com/PostView.nhn?blogId=radii26omg&logNo=221051465120&proxyReferer=https:%2F%2Fwww.google.com%2F 
+  괜찮네 이거
+- 
 
 #### numpy object (npy)로 저장 / 읽기
 
@@ -295,6 +323,9 @@
   plt.grid(True) 	# 그리드 온
   plt.grid(True, axis='y', color='red', alpha=0.5, linestyle='--')	# 그리드 스타일
   ```
+
+  https://www.delftstack.com/ko/howto/matplotlib/set-matplotlib-grid-interval/
+  그리드 더 다양하게!
 
 - 타이틀
 
