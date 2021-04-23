@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### preprocess log data
-fname = '0421/distance_open.txt'      
+fname = 'appliance/distant_close.txt'      
+# fname = 'board/distant.txt'      
 data = np.loadtxt(fname, usecols=[0,1]);
 data_ch1, data_ch2 = np.array(data[:,0], dtype='float'), np.array(data[:,1], dtype='float')
 
@@ -54,7 +55,7 @@ plt.title('CH-1 (Frequency domain)')
 plt.xlabel('freq (Hz)')
 plt.ylabel('amplitude')
 
-plt.xlim(0,10)
+plt.xlim(0,150)
 plt.grid(True)
 
 plt.tight_layout()
