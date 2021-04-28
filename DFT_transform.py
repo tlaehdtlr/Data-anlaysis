@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### preprocess log data
-data = np.loadtxt("log.txt", dtype='str', delimiter='\t', skiprows=8)
+data = np.loadtxt("stm_log/100uV_x1_modified_cal.txt", dtype='str', delimiter='\t', skiprows=8)
 time, data_ch1 = np.array(data[:,1], dtype='float'), np.array(data[:,2], dtype='float')
 # time, data_ch1 = np.array(data[:,1]), np.array(data[:,2])
 
@@ -34,7 +34,7 @@ plt.xlabel('freq (Hz)')
 plt.ylabel('amplitude')
 
 
-plt.xlim(0,50)
+plt.xlim(0,60)
 plt.grid(True)
 
 plt.tight_layout()
