@@ -14,8 +14,8 @@ plt.plot( freq, 20*np.log10(abs(h)))
 # Create/view signal that is a mixture of two frequencies
 f1 = 17
 f2 = 60
-t = np.linspace(0.0, 1, 1_000)
-y_pure = np.sin(f1 * 2.0*np.pi*t) + np.sin(f2 * 2.0*np.pi*t) 
+t = np.linspace(0.0, 1, 1000)
+y_pure = np.sin(f1 * 2.0*np.pi*t) + np.sin(f2 * 2.0*np.pi*t)
 plt.figure('result')
 plt.subplot(211)
 plt.plot(t, y_pure, color = 'r')

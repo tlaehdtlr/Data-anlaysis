@@ -2,12 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### preprocess log data
-fname = 'board_NI/100uV_x24_ble_close.txt'      
-# fname = 'board/distant.txt'
+fname = 'noise/13.txt'
+# fname = 'imedisync/2mV_1Hz_open.txt'
+
 test_signal = False
 
-if test_signal:      
-    data = np.loadtxt(fname, usecols=[0,1]);
+if test_signal:
+    data = np.loadtxt(fname, usecols=[4,5]);
     data_ch1, data_ch2 = np.array(data[:,0], dtype='float'), np.array(data[:,1], dtype='float')
 else:
     data = np.loadtxt(fname, usecols=[2,3]);
@@ -18,7 +19,7 @@ else:
 
 
 '''
-data 어떻게 얻었는지 확인 제대로 해야함        
+data 어떻게 얻었는지 확인 제대로 해야함
 '''
 # data sampling freq
 freq_adc_get = 250
