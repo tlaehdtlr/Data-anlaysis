@@ -208,7 +208,32 @@ def convert_twos_comple(value):
 
 
 PACKET_TYPES = EnhancedPacket, Packet, SimplePacket
+
+target_l2cap_len = 237
+empty_l2cap_len = 26
+
+index_data_header_size = 22
+index_data_header_more_data = 21
+more_data_bit = 0x10
+
+index_st_attr_value = 30
+index_st_attr_value_frag2 = 23
+index_end_attr_value = -3
+
+index_flags = 8
+flags_bits_data = 0x11
+flags_bits_start = 0x13
+
+index_op = 27
+op_bits_write = 0x12
+index_handle = 28
+handle_bits_start = 0x000e
+index_write = 30
+write_bits_start = 0x01
+
+
 def read_sniffer_raw_data(packets, cnt):
+    # file_name = "sniffer_raw_data/183F_sniffer.pcapng"
     file_name = "sniffer_raw_data/sniffer_test_signal.pcapng"
     # file_name = "sniffer_raw_data/yeom_sniffer_183F.pcapng"
     print("file name : ", file_name)
@@ -217,25 +242,67 @@ def read_sniffer_raw_data(packets, cnt):
         scanner = FileScanner(fp)
         test = 0
 
+        packet = []
+        more_data = False
+        prev_length = 0
+        flag_start = 0
         for block in scanner:
             test+=1
-            # print(dir(block))
-            # return ;
-            if not (test in list(range(4050,4064))): continue
-            if (block.packet_len == 26): continue
-            print("No. ", test - 2)
-            print(block.packet_payload_info)
-            print("")
-            print(block.packet_len, block.packet_data)
-            print("")
-            if not (100< test < 500): continue
-            if isinstance(block, EnhancedPacket):
-                print(block.packet_payload_info, block.packet_payload_info)
-
-                # if block.packet_len == 267:
-                #     cnt+=1
-                #     # if not (cnt == 4): continue
-                #     packets.append(list(map(int, block.packet_data))[30:264])
+            if not isinstance(block, EnhancedPacket): continue
+            # if not (test in list(range(4050,4058))): continue
+            # for better performance
+            if (block.packet_len == empty_l2cap_len): continue
+            # print("=="*80)
+            # print("No. ", test - 2)
+            # print("payload info : ", block.packet_payload_info)
+            tmp = list(map(int, block.packet_data))
+            # skip before start
+            if (tmp[index_flags] == 0x13):
+                if (tmp[index_op] == op_bits_write) and (tmp[index_handle] == handle_bits_start) and (tmp[index_write] == write_bits_start):
+                    flag_start += 1
+                    print('flag start', test-2)
+            # target data
+            if not (tmp[index_flags] == flags_bits_data): continue
+            ## consider scenario
+            if (flag_start < 1):
+                # print("frag no. : ", test-2)
+                continue
+            # complete packet
+            if (tmp[index_data_header_size] - 4 == target_l2cap_len):
+                packet = tmp[index_st_attr_value:index_end_attr_value]
+                # print("complete : ", len(packet), list(map(hex, packet)))
+                packets.append(packet)
+                packet = []
+                more_data = False
+            # next frag
+            elif (more_data):
+                # complete ?
+                prev_length += (tmp[index_data_header_size])
+                # print('prev len : ',prev_length)
+                if (prev_length == target_l2cap_len):
+                    packet = packet + tmp[index_st_attr_value_frag2:index_end_attr_value]
+                    packets.append(packet)
+                    # print("complete : ", len(packet), list(map(hex, packet)))
+                    packet = []
+                    prev_length = 0
+                    more_data = False
+                # require more frag...
+                elif (prev_length < target_l2cap_len):
+                    # i don't know if there is a crc value
+                    packet = packet + tmp[index_st_attr_value_frag2:index_end_attr_value]
+                    print("frag 3, 4 ...?, frag no. : ", test - 2)
+                # maybe frag error (not complete)
+                else:
+                    print("error, frag no. : ", test - 2)
+                    packet = []
+                    prev_length = 0
+                    more_data = False
+            # start of frag ?
+            elif (tmp[index_data_header_more_data] & more_data_bit):
+                more_data = True
+                packet = tmp[index_st_attr_value:index_end_attr_value]
+                # print("frag start : ", len(packet), list(map(hex, packet)))
+                prev_length = tmp[index_data_header_size]-4
 
 
 gain = 24
@@ -264,12 +331,13 @@ def main():
     cnt = 0
     packets = []
     read_sniffer_raw_data(packets, cnt);
-
     dac_arr = []
     for packet in packets:
         dac_data(dac_arr, packet)
+        pass
 
     np_data = np.array(dac_arr)
+    print(np_data.shape)
     # print(np_data[:,0].size)
     # save_txt(np_data)
     # for i in range(cnt):
